@@ -193,23 +193,7 @@ function init() {
   hand2.add(handModelFactory.createHandModel(hand2));
   scene.add(hand2);
 
-  //
-
-  const geometry = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(0, 0, -1),
-  ]);
-
-  const line = new THREE.Line(geometry);
-  line.name = "line";
-  line.scale.z = 5;
-
-  controller1.add(line.clone());
-  controller2.add(line.clone());
-
-  //
-
-  window.addEventListener("resize", onWindowResize, false);
+  window.addEventListener("resize", onWindowResize);
 }
 
 function onWindowResize() {
