@@ -26,7 +26,7 @@ let controls;
 
 // This constants will control render sizes!!!
 const scale = 0.1;
-const translation = new THREE.Vector3(0, 1.3, -0.5);
+const translation = new THREE.Vector3(0, 1, -0.5);
 const atomRadius = 0.04;
 const stickRadius = 0.015;
 
