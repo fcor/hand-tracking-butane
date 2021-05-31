@@ -10,8 +10,16 @@ let hand1, hand2;
 let controller1, controller2;
 let controllerGrip1, controllerGrip2;
 let cylinders, atoms;
+let plot1, plot2;
+const circleGeometry = new THREE.CircleGeometry( 0.01, 32 );
+const circleMaterial = new THREE.MeshBasicMaterial( { color: 0x000000 } );
 
 let lastTime = 0;
+const timeOffset = 0.2;
+
+let line1;
+const drawCount = 0;
+const maxPoints = 30;
 
 const hand1Bodies = [];
 const hand2Bodies = [];
@@ -23,6 +31,9 @@ const timestep = 1 / 60;
 
 let bodies = [];
 let meshes = [];
+
+let angles = [];
+let energies = [];
 
 let controls;
 
@@ -147,7 +158,6 @@ function init() {
   scene.add(light);
 
   addPlane();
-  // addCylinder();
   addMolecule();
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -195,6 +205,67 @@ function init() {
   hand2.add(handModelFactory.createHandModel(hand2));
   scene.add(hand2);
 
+  // Plots
+  const planeGeometry = new THREE.PlaneGeometry(1, 1);
+  const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  plot1 = new THREE.Group();
+  plot2 = new THREE.Group();
+
+  const plane1 = new THREE.Mesh(planeGeometry, planeMaterial);
+  const xAxisPoints1 = [
+    new THREE.Vector3(0, -0.4, 0),
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(0, 0.4, 0),
+  ];
+
+  const yAxisPoints1 = [
+    new THREE.Vector3(-0.4, -0.4, 0),
+    new THREE.Vector3(0, -0.4, 0),
+    new THREE.Vector3(0.4, -0.4, 0),
+  ];
+
+  const lineGeometry1 = new THREE.BufferGeometry().setFromPoints(xAxisPoints1);
+  const lineGeometry2 = new THREE.BufferGeometry().setFromPoints(yAxisPoints1);
+  const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  const xAxis1 = new THREE.Line(lineGeometry1, lineMaterial);
+  const yAxis1 = new THREE.Line(lineGeometry2, lineMaterial);
+  const bufferGeometry = new THREE.BufferGeometry();
+
+  const positions = new Float32Array(maxPoints * 3);
+  bufferGeometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(positions, 3)
+  );
+  bufferGeometry.setDrawRange(0, drawCount);
+
+  line1 = new THREE.Line(bufferGeometry, lineMaterial);
+
+  plot1.add(plane1, xAxis1, yAxis1);
+  plot1.position.set(-1, 1.5, -1);
+
+  const plane2 = new THREE.Mesh(planeGeometry, planeMaterial);
+  const xAxisPoints2 = [
+    new THREE.Vector3(-0.4, -0.4, 0),
+    new THREE.Vector3(-0.4, 0, 0),
+    new THREE.Vector3(-0.4, 0.4, 0),
+  ];
+
+  const yAxisPoints2 = [
+    new THREE.Vector3(-0.4, -0.4, 0),
+    new THREE.Vector3(0, -0.4, 0),
+    new THREE.Vector3(0.4, -0.4, 0),
+  ];
+
+  const lineGeometry3 = new THREE.BufferGeometry().setFromPoints(xAxisPoints2);
+  const lineGeometry4 = new THREE.BufferGeometry().setFromPoints(yAxisPoints2);
+  const xAxis2 = new THREE.Line(lineGeometry3, lineMaterial);
+  const yAxis2 = new THREE.Line(lineGeometry4, lineMaterial);
+
+  plot2.position.set(1, 1.5, -1);
+  plot2.add(plane2, xAxis2, yAxis2);
+
+  scene.add(plot1, plot2);
+
   window.addEventListener("resize", onWindowResize);
 }
 
@@ -213,10 +284,13 @@ function animate() {
 function render() {
   const elapsedTime = clock.getElapsedTime();
   const delta = elapsedTime - lastTime;
-  if (delta >= 1) {
+
+  if (delta >= timeOffset) {
     updateEnergy();
+    updatePlots();
     lastTime = elapsedTime;
   }
+
   if (!handsAdded && hand1.children.length > 1) {
     addHandPhysics();
     handsAdded = true;
@@ -560,8 +634,8 @@ function updateEnergy() {
   })
     .then((response) => response.json())
     .then((ani) => {
-      const energy = ani.energy * 627.509 + 99402;
-      console.log(energy);
+      const energy = ani.energy * 627.509 + 99403;
+      energies.push(energy);
 
       const b1x = bodies[2].position.x / scale - bodies[1].position.x / scale;
       const b1y =
@@ -615,7 +689,11 @@ function updateEnergy() {
       const xxx = DotProduct(n1[0], n1[1], n1[2], n2[0], n2[1], n2[2]);
       const yyy = DotProduct(m1[0], m1[1], m1[2], n2[0], n2[1], n2[2]);
       const angle = (Math.atan2(yyy, xxx) * 180) / 3.141592654;
-      console.log(angle);
+      const circle = new THREE.Mesh(circleGeometry, circleMaterial);
+      plot1.add(circle);
+      const x = (angle + 180)/360 * 0.8 - 0.4;
+      const y = energy / 20 * 0.8 - 0.4;
+      circle.position.set(x, y, 0.002);
     });
 }
 
@@ -625,4 +703,28 @@ function DotProduct(Ax, Ay, Az, Bx, By, Bz) {
 
 function CrossProduct(Ax, Ay, Az, Bx, By, Bz) {
   return [Ay * Bz - Az * By, Az * Bx - Ax * Bz, Ax * By - Ay * Bx];
+}
+
+function updatePlots() {
+  // const positions = line1.geometry.attributes.position.array;
+
+  // let x, y, z, index;
+  // x = y = z = index = 0;
+
+  // for (let i = 0, l = maxPoints; i < l; i++) {
+  //   positions[index++] = x;
+  //   positions[index++] = y;
+  //   positions[index++] = z;
+
+  //   x = (Math.random() - 0.4) * 0.8;
+  //   y = (Math.random() - 0.4) * 0.8;
+  // }
+
+  // if(energies.length <= 10) {
+  //   line1.geometry.setDrawRange( 0, energies.length );
+  // }
+  // line1.geometry.attributes.position.needsUpdate = true;
+  // line1.geometry.computeBoundingBox();
+  // line1.geometry.computeBoundingSphere();
+  
 }
