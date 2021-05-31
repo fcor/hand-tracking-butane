@@ -17,9 +17,9 @@ const circleMaterial = new THREE.MeshBasicMaterial( { color: 0x000000 } );
 let lastTime = 0;
 const timeOffset = 0.2;
 
-let line1;
+let line2;
 const drawCount = 0;
-const maxPoints = 30;
+const maxPoints = 150;
 
 const hand1Bodies = [];
 const hand2Bodies = [];
@@ -229,16 +229,6 @@ function init() {
   const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
   const xAxis1 = new THREE.Line(lineGeometry1, lineMaterial);
   const yAxis1 = new THREE.Line(lineGeometry2, lineMaterial);
-  const bufferGeometry = new THREE.BufferGeometry();
-
-  const positions = new Float32Array(maxPoints * 3);
-  bufferGeometry.setAttribute(
-    "position",
-    new THREE.BufferAttribute(positions, 3)
-  );
-  bufferGeometry.setDrawRange(0, drawCount);
-
-  line1 = new THREE.Line(bufferGeometry, lineMaterial);
 
   plot1.add(plane1, xAxis1, yAxis1);
   plot1.position.set(-1, 1.5, -1);
@@ -261,8 +251,19 @@ function init() {
   const xAxis2 = new THREE.Line(lineGeometry3, lineMaterial);
   const yAxis2 = new THREE.Line(lineGeometry4, lineMaterial);
 
+  const bufferGeometry = new THREE.BufferGeometry();
+
+  const positions = new Float32Array(maxPoints * 3);
+  bufferGeometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(positions, 3)
+  );
+  bufferGeometry.setDrawRange(0, drawCount);
+
+  line2 = new THREE.Line(bufferGeometry, lineMaterial);
+
   plot2.position.set(1, 1.5, -1);
-  plot2.add(plane2, xAxis2, yAxis2);
+  plot2.add(plane2, xAxis2, yAxis2, line2);
 
   scene.add(plot1, plot2);
 
@@ -635,6 +636,9 @@ function updateEnergy() {
     .then((response) => response.json())
     .then((ani) => {
       const energy = ani.energy * 627.509 + 99403;
+      if(energies.length >= maxPoints) {
+        energies.shift();
+      }
       energies.push(energy);
 
       const b1x = bodies[2].position.x / scale - bodies[1].position.x / scale;
@@ -692,7 +696,7 @@ function updateEnergy() {
       const circle = new THREE.Mesh(circleGeometry, circleMaterial);
       plot1.add(circle);
       const x = (angle + 180)/360 * 0.8 - 0.4;
-      const y = energy / 20 * 0.8 - 0.4;
+      const y = energy / 25 * 0.8 - 0.4;
       circle.position.set(x, y, 0.002);
     });
 }
@@ -706,7 +710,7 @@ function CrossProduct(Ax, Ay, Az, Bx, By, Bz) {
 }
 
 function updatePlots() {
-  // const positions = line1.geometry.attributes.position.array;
+  const positions = line2.geometry.attributes.position.array;
 
   // let x, y, z, index;
   // x = y = z = index = 0;
@@ -720,11 +724,20 @@ function updatePlots() {
   //   y = (Math.random() - 0.4) * 0.8;
   // }
 
-  // if(energies.length <= 10) {
-  //   line1.geometry.setDrawRange( 0, energies.length );
-  // }
-  // line1.geometry.attributes.position.needsUpdate = true;
-  // line1.geometry.computeBoundingBox();
-  // line1.geometry.computeBoundingSphere();
+  let index = 0;
+
+  for (let i = 0; i < energies.length; i++) {
+    positions[index++] = i / 150 * 0.8 - 0.4;
+    positions[index++] = energies[i] / 25 * 0.8 - 0.4;
+    positions[index++] = 0.002;
+  }
+
+  if(energies.length <= 150) {
+    line2.geometry.setDrawRange( 0, energies.length );
+  }
+
+  line2.geometry.attributes.position.needsUpdate = true;
+  line2.geometry.computeBoundingBox();
+  line2.geometry.computeBoundingSphere();
   
 }
