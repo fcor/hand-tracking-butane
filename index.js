@@ -5,11 +5,13 @@ import { XRControllerModelFactory } from "./webxr/XRControllerModelFactory.js";
 import { XRHandModelFactory } from "./webxr/XRHandModelFactory.js";
 
 let container;
-let camera, scene, renderer, world;
+let camera, scene, renderer, world, clock;
 let hand1, hand2;
 let controller1, controller2;
 let controllerGrip1, controllerGrip2;
 let cylinders, atoms;
+
+let lastTime = 0;
 
 const hand1Bodies = [];
 const hand2Bodies = [];
@@ -132,6 +134,8 @@ function init() {
 
   scene.add(new THREE.HemisphereLight(0x808080, 0x606060));
 
+  clock = new THREE.Clock();
+
   const light = new THREE.DirectionalLight(0xffffff);
   light.position.set(0, 6, 0);
   light.castShadow = true;
@@ -145,8 +149,6 @@ function init() {
   addPlane();
   // addCylinder();
   addMolecule();
-
-  //
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -209,14 +211,15 @@ function animate() {
 }
 
 function render() {
+  const elapsedTime = clock.getElapsedTime();
+  const delta = elapsedTime - lastTime;
+  if (delta >= 1) {
+    updateEnergy();
+    lastTime = elapsedTime;
+  }
   if (!handsAdded && hand1.children.length > 1) {
     addHandPhysics();
     handsAdded = true;
-    // const geometry = new THREE.BoxGeometry();
-    // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    // const cube = new THREE.Mesh(geometry, material);
-    // cube.position.z = 5;
-    // scene.add(cube);
   }
 
   renderer.render(scene, camera);
@@ -385,7 +388,7 @@ function addMolecule() {
 
   const atomGeometry = new THREE.SphereGeometry(atomRadius, 32, 32);
   const sphereShape = new CANNON.Sphere(atomRadius);
-  const physicsMaterial = new CANNON.Material()
+  const physicsMaterial = new CANNON.Material();
   physicsMaterial.friction = 0.3;
   sphereShape.material = physicsMaterial;
 
@@ -436,4 +439,190 @@ function addMolecule() {
 
   scene.add(atoms);
   scene.add(cylinders);
+}
+
+function updateEnergy() {
+  const coordinates = [
+    [
+      Math.round((bodies[1].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[1].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[1].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[2].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[2].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[2].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[3].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[3].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[3].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[4].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[4].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[4].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+
+    [
+      Math.round((bodies[5].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[5].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[5].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[6].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[6].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[6].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[7].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[7].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[7].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[8].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[8].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[8].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[9].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[9].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[9].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[10].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[10].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[10].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[11].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[11].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[11].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[12].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[12].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[12].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[13].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[13].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[13].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+    [
+      Math.round((bodies[14].position.x / scale) * 1000) / 1000,
+      Math.round(((bodies[14].position.y - translation.y) / scale) * 1000) /
+        1000,
+      Math.round(((bodies[14].position.z - translation.z) / scale) * 1000) /
+        1000,
+    ],
+  ];
+
+  const species = [6, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+
+  var data1 = {
+    coordinates: [coordinates],
+    species: [species],
+  };
+
+  fetch(" https://molecularweb.epfl.ch/backend2", {
+    method: "POST", // or 'PUT'
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data1),
+  })
+    .then((response) => response.json())
+    .then((ani) => {
+      const energy = ani.energy * 627.509 + 99402;
+      console.log(energy);
+
+      const b1x = bodies[2].position.x / scale - bodies[1].position.x / scale;
+      const b1y =
+        (bodies[2].position.y - translation.y) / scale -
+        (bodies[1].position.y - translation.y) / scale;
+      const b1z =
+        (bodies[2].position.z - translation.z) / scale -
+        (bodies[1].position.z - translation.z) / scale;
+      const b2x = bodies[3].position.x / scale - bodies[2].position.x / scale;
+      const b2y =
+        (bodies[3].position.y - translation.y) / scale -
+        (bodies[2].position.y - translation.y) / scale;
+      const b2z =
+        (bodies[3].position.z - translation.z) / scale -
+        (bodies[2].position.z - translation.z) / scale;
+      const b3x = bodies[4].position.x / scale - bodies[3].position.x / scale;
+      const b3y =
+        (bodies[4].position.y - translation.y) / scale -
+        (bodies[3].position.y - translation.y) / scale;
+      const b3z =
+        (bodies[4].position.z - translation.z) / scale -
+        (bodies[3].position.z - translation.z) / scale;
+
+      const b1xb2 = CrossProduct(b1x, b1y, b1z, b2x, b2y, b2z);
+      const moduleb1xb2 = Math.sqrt(
+        b1xb2[0] * b1xb2[0] + b1xb2[1] * b1xb2[1] + b1xb2[2] * b1xb2[2]
+      );
+      const n1 = [
+        b1xb2[0] / moduleb1xb2,
+        b1xb2[1] / moduleb1xb2,
+        b1xb2[2] / moduleb1xb2,
+      ];
+      const b2xb3 = CrossProduct(b2x, b2y, b2z, b3x, b3y, b3z);
+      const moduleb2xb3 = Math.sqrt(
+        b2xb3[0] * b2xb3[0] + b2xb3[1] * b2xb3[1] + b2xb3[2] * b2xb3[2]
+      );
+      const n2 = [
+        b2xb3[0] / moduleb2xb3,
+        b2xb3[1] / moduleb2xb3,
+        b2xb3[2] / moduleb2xb3,
+      ];
+      const moduleb2 = Math.sqrt(b2x * b2x + b2y * b2y + b2z * b2z);
+      const m1 = CrossProduct(
+        n1[0],
+        n1[1],
+        n1[2],
+        b2x / moduleb2,
+        b2y / moduleb2,
+        b2z / moduleb2
+      );
+      const xxx = DotProduct(n1[0], n1[1], n1[2], n2[0], n2[1], n2[2]);
+      const yyy = DotProduct(m1[0], m1[1], m1[2], n2[0], n2[1], n2[2]);
+      const angle = (Math.atan2(yyy, xxx) * 180) / 3.141592654;
+      console.log(angle);
+    });
+}
+
+function DotProduct(Ax, Ay, Az, Bx, By, Bz) {
+  return Ax * Bx + Ay * By + Az * Bz;
+}
+
+function CrossProduct(Ax, Ay, Az, Bx, By, Bz) {
+  return [Ay * Bz - Az * By, Az * Bx - Ax * Bz, Ax * By - Ay * Bx];
 }
