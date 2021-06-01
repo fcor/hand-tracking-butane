@@ -32,10 +32,14 @@ const timestep = 1 / 60;
 let bodies = [];
 let meshes = [];
 
-let angles = [];
 let energies = [];
 
 let controls;
+
+const textureLoader = new THREE.TextureLoader()
+const angleTexture = textureLoader.load("./textures/angles.jpg");
+// angleTexture.magFilter = THREE.NearestFilter;
+
 
 // This constants will control render sizes!!!
 const scale = 0.1;
@@ -207,33 +211,20 @@ function init() {
 
   // Plots
   const planeGeometry = new THREE.PlaneGeometry(1, 1);
-  const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const planeMaterial1 = new THREE.MeshBasicMaterial({ map: angleTexture });
+  const planeMaterial2 = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
   plot1 = new THREE.Group();
   plot2 = new THREE.Group();
 
-  const plane1 = new THREE.Mesh(planeGeometry, planeMaterial);
-  const xAxisPoints1 = [
-    new THREE.Vector3(0, -0.4, 0),
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(0, 0.4, 0),
-  ];
+  const plane1 = new THREE.Mesh(planeGeometry, planeMaterial1);
 
-  const yAxisPoints1 = [
-    new THREE.Vector3(-0.4, -0.4, 0),
-    new THREE.Vector3(0, -0.4, 0),
-    new THREE.Vector3(0.4, -0.4, 0),
-  ];
-
-  const lineGeometry1 = new THREE.BufferGeometry().setFromPoints(xAxisPoints1);
-  const lineGeometry2 = new THREE.BufferGeometry().setFromPoints(yAxisPoints1);
   const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
-  const xAxis1 = new THREE.Line(lineGeometry1, lineMaterial);
-  const yAxis1 = new THREE.Line(lineGeometry2, lineMaterial);
 
-  plot1.add(plane1, xAxis1, yAxis1);
-  plot1.position.set(-1, 1.5, -1);
+  plot1.add(plane1);
+  plot1.position.set(-0.5, 1.5, -1.5);
 
-  const plane2 = new THREE.Mesh(planeGeometry, planeMaterial);
+  const plane2 = new THREE.Mesh(planeGeometry, planeMaterial2);
   const xAxisPoints2 = [
     new THREE.Vector3(-0.4, -0.4, 0),
     new THREE.Vector3(-0.4, 0, 0),
@@ -262,7 +253,7 @@ function init() {
 
   line2 = new THREE.Line(bufferGeometry, lineMaterial);
 
-  plot2.position.set(1, 1.5, -1);
+  plot2.position.set(0.7, 1.5, -1.5);
   plot2.add(plane2, xAxis2, yAxis2, line2);
 
   scene.add(plot1, plot2);
