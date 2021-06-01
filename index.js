@@ -38,6 +38,7 @@ let controls;
 
 const textureLoader = new THREE.TextureLoader()
 const angleTexture = textureLoader.load("./textures/angles.jpg");
+const timeTexture = textureLoader.load("./textures/time.jpg");
 // angleTexture.magFilter = THREE.NearestFilter;
 
 
@@ -212,36 +213,18 @@ function init() {
   // Plots
   const planeGeometry = new THREE.PlaneGeometry(1, 1);
   const planeMaterial1 = new THREE.MeshBasicMaterial({ map: angleTexture });
-  const planeMaterial2 = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const planeMaterial2 = new THREE.MeshBasicMaterial({ map: timeTexture });
+  const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
 
   plot1 = new THREE.Group();
   plot2 = new THREE.Group();
 
   const plane1 = new THREE.Mesh(planeGeometry, planeMaterial1);
 
-  const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
-
   plot1.add(plane1);
   plot1.position.set(-0.5, 1.5, -1.5);
 
   const plane2 = new THREE.Mesh(planeGeometry, planeMaterial2);
-  const xAxisPoints2 = [
-    new THREE.Vector3(-0.4, -0.4, 0),
-    new THREE.Vector3(-0.4, 0, 0),
-    new THREE.Vector3(-0.4, 0.4, 0),
-  ];
-
-  const yAxisPoints2 = [
-    new THREE.Vector3(-0.4, -0.4, 0),
-    new THREE.Vector3(0, -0.4, 0),
-    new THREE.Vector3(0.4, -0.4, 0),
-  ];
-
-  const lineGeometry3 = new THREE.BufferGeometry().setFromPoints(xAxisPoints2);
-  const lineGeometry4 = new THREE.BufferGeometry().setFromPoints(yAxisPoints2);
-  const xAxis2 = new THREE.Line(lineGeometry3, lineMaterial);
-  const yAxis2 = new THREE.Line(lineGeometry4, lineMaterial);
-
   const bufferGeometry = new THREE.BufferGeometry();
 
   const positions = new Float32Array(maxPoints * 3);
@@ -254,7 +237,7 @@ function init() {
   line2 = new THREE.Line(bufferGeometry, lineMaterial);
 
   plot2.position.set(0.7, 1.5, -1.5);
-  plot2.add(plane2, xAxis2, yAxis2, line2);
+  plot2.add(plane2, line2);
 
   scene.add(plot1, plot2);
 
