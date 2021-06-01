@@ -676,7 +676,8 @@ function updateEnergy() {
       const circle = new THREE.Mesh(circleGeometry, circleMaterial);
       plot1.add(circle);
       const x = (angle + 180)/360 * 0.8 - 0.4;
-      const y = energy / 25 * 0.8 - 0.4;
+      const plottingEnergy = energy >= 25 ? 25 : energy;
+      const y = plottingEnergy / 25 * 0.8 - 0.4;
       circle.position.set(x, y, 0.002);
     });
 }
