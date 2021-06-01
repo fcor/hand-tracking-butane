@@ -613,7 +613,13 @@ function updateEnergy() {
       if(energies.length >= maxPoints) {
         energies.shift();
       }
-      energies.push(energy);
+
+      if(energy > 25) {
+        energies.push(25);
+      } else {
+        energies.push(energy);
+      }
+      
 
       const b1x = bodies[2].position.x / scale - bodies[1].position.x / scale;
       const b1y =
@@ -685,18 +691,6 @@ function CrossProduct(Ax, Ay, Az, Bx, By, Bz) {
 
 function updatePlots() {
   const positions = line2.geometry.attributes.position.array;
-
-  // let x, y, z, index;
-  // x = y = z = index = 0;
-
-  // for (let i = 0, l = maxPoints; i < l; i++) {
-  //   positions[index++] = x;
-  //   positions[index++] = y;
-  //   positions[index++] = z;
-
-  //   x = (Math.random() - 0.4) * 0.8;
-  //   y = (Math.random() - 0.4) * 0.8;
-  // }
 
   let index = 0;
 
