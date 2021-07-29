@@ -11,8 +11,8 @@ let controller1, controller2;
 let controllerGrip1, controllerGrip2;
 let cylinders, atoms;
 let plot1, plot2;
-const circleGeometry = new THREE.CircleGeometry( 0.01, 32 );
-const circleMaterial = new THREE.MeshBasicMaterial( { color: 0x000000 } );
+const circleGeometry = new THREE.CircleGeometry( 0.007, 32 );
+const circleMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 
 let lastTime = 0;
 const timeOffset = 0.2;
@@ -214,7 +214,7 @@ function init() {
   const planeGeometry = new THREE.PlaneGeometry(1, 1);
   const planeMaterial1 = new THREE.MeshBasicMaterial({ map: angleTexture });
   const planeMaterial2 = new THREE.MeshBasicMaterial({ map: timeTexture });
-  const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
   plot1 = new THREE.Group();
   plot2 = new THREE.Group();
