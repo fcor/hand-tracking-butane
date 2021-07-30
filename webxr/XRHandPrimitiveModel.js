@@ -32,7 +32,7 @@ class XRHandPrimitiveModel {
 
 			}
 
-			const jointMaterial = new MeshStandardMaterial( { color: 0x7070ff, roughness: 1, metalness: 0 } );
+			const jointMaterial = new MeshStandardMaterial( { color: 0x3333ff, roughness: 1, metalness: 0 } );
 			const tipMaterial = new MeshStandardMaterial( { color: 0x0000ff, roughness: 1, metalness: 0 } );
 
 			const joints = [
