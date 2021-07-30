@@ -391,10 +391,8 @@ function cylindricalSegment(A, B) {
     32
   );
   const cylinderMaterial = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
-    emissive: 0x072534,
-    side: THREE.DoubleSide,
-    shading: THREE.FlatShading,
+    color: 0xADADAD,
+    flatShading: true,
   });
   cylinderGeometry.translate(0, h / 2, 0);
   const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
@@ -426,13 +424,13 @@ function addMolecule() {
   atoms = new THREE.Object3D();
   cylinders = new THREE.Object3D();
   const carbonMaterial = new THREE.MeshPhongMaterial({
-    color: 0x909090,
-    shading: THREE.FlatShading,
+    color: 0x5C5C5C,
+    flatShading: true,
   });
 
   const hydrogenMaterial = new THREE.MeshPhongMaterial({
     color: 0xffffff,
-    shading: THREE.FlatShading,
+    flatShading: true,
   });
 
   const atomGeometry = new THREE.SphereGeometry(atomRadius, 32, 32);
